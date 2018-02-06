@@ -1,0 +1,36 @@
+<h1>Projects</h1>
+
+<a href="{{url_for('newProject', artist_id=1)}}">Create New Project</a>
+</br>
+
+<div class = 'flash'>
+		      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+
+        <ul>
+        {% for message in messages %}
+            <li> <strong> {{ message }} </strong> </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+
+</div>
+{% for project in projects %}
+
+
+<a href="{{project.title}}">Project Title</a>
+<div class="">
+
+  <p>{{project.description}}</p>
+
+  <p>{{project.imageUrl}}</p>
+
+  <a href="{{url_for('editProject', project_id=project.id, artist_id=1)}}">Edit</a>
+
+  <a href="{{url_for('deleteProject', project_id=project.id, artist_id=1)}}">Delete</a>
+</div>
+
+</br>
+</br>
+{% endfor %}

@@ -1,0 +1,38 @@
+<body>
+
+  <h1>Artists</h1>
+
+  <a href="{{url_for('newArtist')}}">Add new artist</a>
+  <div class = 'flash'>
+  		      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+
+          <ul>
+          {% for message in messages %}
+              <li> <strong> {{ message }} </strong> </li>
+          {% endfor %}
+          </ul>
+          {% endif %}
+      {% endwith %}
+
+  </div>
+
+  {% for a in artists %}
+
+  <div>
+
+    <p>{{a.name}}</p>
+    <p>{{a.bio}}</p>
+    <p>{{a.imageUrl}}</p>
+    <p>{{a.country}}</p>
+    <p>{{a.category}}</p>
+
+    <a href="{{url_for('editArtist', artist_id=a.id)}}">Edit</a>
+
+    <a href="{{url_for('deleteArtist', artist_id=a.id)}}">Delete</a>
+  </div>
+</br>
+
+
+{% endfor %}
+</body>
