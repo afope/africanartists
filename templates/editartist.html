@@ -1,42 +1,53 @@
+<head>
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='artists.css') }}">
+  <link href="https://fonts.googleapis.com/css?family=EB+Garamond" rel="stylesheet">
+  <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
+</head>
 
 <h1> Edit Artist </h1>
 
-<form action="{{url_for('editArtist', artist_id=artist_id)}}" method="POST">
 
-<p>Name:</p>
-
-<input type='text' size='30' name='name' placeholder='name'>
-
-<p>Bio:</p>
-<input type='text' size='30' name='bio' placeholder='bio'>
+<div class="form_space">
+  <form action="{{url_for('editArtist', artist_id=artist_id)}}" method="POST">
 
 
-<p>Country:</p>
-<input type='text' size='30' name='country' placeholder= 'country'>
+  <p>Name:</p>
+
+  <input type='text' size='30' name='name' placeholder='{{a.name}}'>
+
+  <p>Bio:</p>
+  <input type='text' size='40' name='bio' placeholder='{{a.bio}}'>
 
 
-<p>What kind of artist are you?</p>
-<select type='text' name ='category' placeholder= 'category' >
-  <option value="volvo">Photographer</option>
-  <option value="saab">Painter</option>
-  <option value="mercedes">Visual Artist</option>
-  <option value="audi">Multi-media Artist</option>
-  <option value="audi">Writer</option>
-  <option value="audi">Performance Artist</option>
-  <option value="audi">Dancer</option>
-  <option value="audi">Musician</option>
-</select>
+  <p>Country:</p>
+  <input type='text' size='30' name='country' placeholder= '{{a.country}}'>
+
+
+  <p>What kind of artist are you?</p>
+  <select type='text' name ='category' placeholder= '{{a.category}}' value='{{a.catrgory}}'>
+    <option value="Photographer">Photographer</option>
+    <option value="Painter">Painter</option>
+    <option value="Visual Artist">Visual Artist</option>
+    <option value="Multi-media artist">Multi-media Artist</option>
+    <option value="Writer">Writer</option>
+    <option value="Performance Artist">Performance Artist</option>
+    <option value="Dancer">Dancer</option>
+    <option value="Musician">Musician</option>
+  </select>
 
 
 
-<p>Profile image:</p>
-<input type='text' size='30' name='imageUrl' placeholder= 'imageUrl' >
-</br>
-</br>
+  <p>Profile image:</p>
+  <input type='text' size='30' name='imageUrl' placeholder= '{{a.imageUrl}}' >
+  </br>
+  </br>
 
-<input type='submit' value='Update'>
-
-</form>
-<a href="{{url_for('showArtists', artist_id=artist_id)}}">Cancel</a>
-
+  <button type='submit' value='Update' class="submit">Submit</buttton>
+  <a  href="{{url_for('showArtists', artist_id=artist_id)}}"> <button class="cancel" type="button" name="button"> Cancel</button></a>
+  </form>
+</div>
 </body>
+
+<footer>
+  <p> coded with <i class="em em-black_heart"></i> by afopefoluwa</p>
+</footer>

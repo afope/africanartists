@@ -1,24 +1,29 @@
-<html>
 <head>
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='artists.css') }}">
+  <link href="https://fonts.googleapis.com/css?family=EB+Garamond" rel="stylesheet">
+  <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
 </head>
-<body>
+<h1>Edit Project</h1>
 
-  <h1>Edit Project</h1>
-<form action= "{{url_for('editProject', artist_id=artist_id, project_id=project_id)}}" method = 'POST'>
+<div class="form_space">
+  <form action= "{{url_for('editProject', artist_id=artist_id, project_id=project_id)}}" method = 'POST'>
 
-  <p>Title:</p>
-  <input type='text' size='30' name='title' placeholder='title'>
+    <p>Title:</p>
+    <input type='text' size='30' name='title' placeholder='title'>
 
-  <p>Description:</p>
-  <input type='text' size='30' name='description' placeholder='description'>
-
-
-  <p>Image:</p>
-  <input type='text' size='30' name='imageUrl' placeholder= 'imageUrl'>
+    <p>Description:</p>
+    <input type='text' size='40' name='description' placeholder='description'>
 
 
-<input type='submit' value='Edit'>
-</form>
-<a href="{{url_for('showProjects', artist_id=artist_id)}}">Cancel</a>
-</body>
-</html>
+    <p>Image:</p>
+    <input type='text' size='30' name='imageUrl' placeholder= 'imageUrl'>
+
+
+  <button type='submit' value='Edit' class="submit"></button>
+  </form>
+  <a href="{{url_for('showProjects', artist_id=artist_id)}}"><button type="button" name="button" class="cancel">Cancel</button></a>
+</div>
+
+<footer>
+  <p> coded with <i class="em em-black_heart"></i> by afopefoluwa</p>
+</footer>

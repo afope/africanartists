@@ -1,19 +1,19 @@
-<html>
 <head>
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='artists.css') }}">
+  <link href="https://fonts.googleapis.com/css?family=EB+Garamond" rel="stylesheet">
+  <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
 </head>
 <body>
-<h1> Are you sure you want to delete ? </h1>
+<p style="margin-top:50px; margin-bottom:10px; padding:10px;"> Are you sure you want to delete ? </p>
+ <div class="form_action">
+   <form action="#" method = 'post'>
 
-<form action="#" method = 'post'>
-
-<input type='submit', value = 'Delete'>
-
-
-
+    <button type='submit' value='Update' class="submit">Delete</buttton>
+   <a href = "{{url_for('showArtists', artist_id=artist_id)}}"><button type="button" name="button" class="cancel">  Cancel </button></a>
+ </div>
 
 </form>
 
-<a href = "#"> Cancel </a>
 </body>
 
 </html>

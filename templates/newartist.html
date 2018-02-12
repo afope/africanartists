@@ -1,41 +1,51 @@
+<head>
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='artists.css') }}">
+  <link href="https://fonts.googleapis.com/css?family=EB+Garamond" rel="stylesheet">
+  <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
+</head>
+
 
 <h1> New Artist </h1>
 
-<form action="#" method="POST">
+<div class="form_space">
+  <form action="#" method="POST">
 
-<p>Name:</p>
+  <p>Name:</p>
 
-<input type='text' size='30' name='name'>
+  <input type='text' size='30' name='name'>
 
-<p>Bio:</p>
-<input type='text' size='30' name='bio'>
-
-
-<p>Country:</p>
-<input type='text' size='30' name='country'>
+  <p>Bio:</p>
+  <input type='text' size='40' name='bio'>
 
 
-<p>What kind of artist are you?</p>
-<select type='text' name='category'>
-  <option value="volvo">Photographer</option>
-  <option value="saab">Painter</option>
-  <option value="mercedes">Visual Artist</option>
-  <option value="audi">Multi-media Artist</option>
-  <option value="audi">Writer</option>
-  <option value="audi">Performance Artist</option>
-  <option value="audi">Dancer</option>
-  <option value="audi">Musician</option>
-</select>
+  <p>Country:</p>
+  <input type='text' size='30' name='country'>
 
 
+  <p>What kind of artist are you?</p>
+  <select type='text' name='category'>
+    <option value="Photographer">Photographer</option>
+    <option value="Painter">Painter</option>
+    <option value="Visual Artist">Visual Artist</option>
+    <option value="Multi-media Artist">Multi-media Artist</option>
+    <option value="Writer">Writer</option>
+    <option value="Performance Artist">Performance Artist</option>
+    <option value="Dancer">Dancer</option>
+    <option value="Musician">Musician</option>
+  </select>
 
-<p>Profile image:</p>
-<input type='text' size='30' name='imageUrl'>
-</br>
-</br>
 
-<input type='submit' value='Create'>
+  <p>Profile image:</p>
+  <input type='text' size='30' name='imageUrl'>
+  </br>
+  </br>
 
-</form>
-<a href="{{url_for('showArtists', artist_id=artist_id)}}">Cancel</a>
-</body>
+  <button type='submit' value='Create' class="submit">Create</button>
+  <a href="{{url_for('showArtists', artist_id=artist_id)}}"><button type="button" name="button" class="cancel">Cancel</button></a>
+
+  </form>
+</div>
+
+<footer>
+  <p> coded with <i class="em em-black_heart"></i> by afopefoluwa</p>
+</footer>

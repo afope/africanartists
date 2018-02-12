@@ -1,7 +1,8 @@
-<h1>Projects</h1>
-
-<a href="{{url_for('newProject', artist_id=1)}}">Create New Project</a>
-</br>
+<head>
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='artists.css') }}">
+  <link href="https://fonts.googleapis.com/css?family=EB+Garamond" rel="stylesheet">
+  <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
+</head>
 
 <div class = 'flash'>
 		      {% with messages = get_flashed_messages() %}
@@ -16,21 +17,36 @@
     {% endwith %}
 
 </div>
+
+
+<body>
+	<header>
+		<h1>Projects</h1>
+		<p class="add-new rotate-one"><a href="{{url_for('newProject', artist_id=artists.id)}}">include ya werk</a></p>
+	</header>
+
 {% for project in projects %}
+	<section class="artist_info">
+		<div class="grid-flex">
+			<div class="col col-image" style="background:url({{project.imageUrl}});">
+			</div>
+			<div class="col col-text">
+				<div class="Aligner-item">
+					<p class="artist_name">{{project.title}}</p>
+					<p class="artist_bio">{{project.description}}</p>
+					<ul class="buttons">
+						<li class="edit_artist">  <a href="{{url_for('editProject', project_id=project.id, artist_id=1)}}">Edit</a></li>
+						<li class="edit_artist"><a href="{{url_for('deleteProject', project_id=project.id, artist_id=1)}}">Delete</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</section>
 
 
-<a href="{{project.title}}">Project Title</a>
-<div class="">
+	{% endfor %}
 
-  <p>{{project.description}}</p>
-
-  <p>{{project.imageUrl}}</p>
-
-  <a href="{{url_for('editProject', project_id=project.id, artist_id=1)}}">Edit</a>
-
-  <a href="{{url_for('deleteProject', project_id=project.id, artist_id=1)}}">Delete</a>
 </div>
-
-</br>
-</br>
-{% endfor %}
+<footer>
+  <p> coded with <i class="em em-black_heart"></i> by afopefoluwa</p>
+</footer>

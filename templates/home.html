@@ -1,0 +1,74 @@
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='main.css') }}">
+<link href="https://fonts.googleapis.com/css?family=EB+Garamond" rel="stylesheet">
+<link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
+
+
+
+<header>
+  <ul class="main-nav">
+    <li><a href="{{url_for('showArtists')}}" class="rotate-one">ARTISTS</a></li>
+    <li><a href="#" class="rotate-two">JOIN</a></li>
+  </ul>
+</header>
+
+<div class="scrolling-wrapper">
+  <div class="home-images">
+    <section class="bg">
+      <a href="#image1" class="overlay-content">
+        <a href="{{url_for('showArtists')}}"><img src="static/img/adeola_work.jpg" alt=""></a>
+        <span class="text-content">
+          <p class="name">Adeola Olagunju</p>
+          <p class="category">Photographer</p>
+        </span>
+      </a>
+    </section>
+
+    <section class="bg">
+      <a href="#image2">
+        <img src="static/img/elo_one.jpg" alt="">
+        <span class="text-content">
+          <p class="name">Eloghosa Osunde</p>
+          <p class="category">Photographer + Writer</p>
+        </span>
+      </a>
+    </section>
+
+    <section class="bg">
+      <a href="#image3">
+        <img src="static/img/yadi-5.jpeg" alt="">
+        <span class="text-content">
+          <p class="name">Yadichinma Ukoha-Kalu</p>
+          <p class="category">Artist</p>
+        </span>
+      </a>
+    </section>
+
+    <section class="bg">
+      <a href="image4">
+        <img src="static/img/yagazie_work.jpg" alt="">
+        <span class="text-content">
+          <p class="name">Yagazie Emezi</p>
+          <p class="category">Photographer</p>
+        </span>
+      </a>
+    </section>
+
+  </div>
+</div>
+
+
+<!-- dummy anchor targets -->
+<i class="target" id="image1"></i>
+<i class="target" id="image2"></i>
+<i class="target" id="image3"></i>
+<i class="target" id="image4"></i>
+
+
+<div class="about">
+  <h1>archiving african women & men makers fi whut now?</h1>
+  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+</div>
+
+<footer>
+  <p> coded with <i class="em em-black_heart"></i> by afopefoluwa</p>
+</footer>

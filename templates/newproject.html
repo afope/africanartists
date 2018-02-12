@@ -1,19 +1,26 @@
-
+<head>
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='artists.css') }}">
+  <link href="https://fonts.googleapis.com/css?family=EB+Garamond" rel="stylesheet">
+  <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
+</head>
 <h1> New Project </h1>
+<div class="form_space">
+  <form action="#" method="POST">
 
-<form action="#" method="POST">
+  <p>Title:</p>
 
-<p>Title:</p>
+  <input type='text' size='30' name='title'>
 
-<input type='text' size='30' name='title'>
+  <p>Description: </p>
+  <input type='text' size='40' name='description'>
+  <p>Image:</p>
+  <input type='text' size='30' name='imageUrl'>
 
-<p>Description: </p>
-<input type='text' size='30' name='description'>
-<p>Image:</p>
-<input type='text' size='30' name='imageUrl'>
+  <button type='submit' value='Create' class="submit">Create</button>
+  <a href="{{url_for('showProjects', artist_id=1)}}"><button type="button" name="button" class="cancel">Cancel</button></a>
+  </form>
+</div>
 
-<input type='submit' value='Create'>
-
-</form>
-
-</body>
+<footer>
+  <p> coded with <i class="em em-black_heart"></i> by afopefoluwa</p>
+</footer>
