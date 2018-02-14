@@ -11,6 +11,13 @@ from sqlalchemy import create_engine
 Base = declarative_base()
 
 
+class User(Base):
+    __tablename__ = "user"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(250), nullable=False)
+    email = Column(String(250), nullable=False)
+    picture = Column(String(250))
 
 class Artists(Base):
     __tablename__ = "artists"
@@ -21,6 +28,8 @@ class Artists(Base):
     country = Column(String(250), nullable=False)
     imageUrl = Column(String(450), nullable=False)
     category = Column(String(100), nullable=False)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    user = relationship(User)
 
 # class for artists Database
     @property
@@ -45,6 +54,8 @@ class Projects(Base):
     imageUrl = Column(String(250))
     artist_id = Column(Integer, ForeignKey('artists.id'))
     artists = relationship(Artists)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
 
 
 # class for projects Database
@@ -61,5 +72,5 @@ class Projects(Base):
 
 
 
-engine = create_engine('sqlite:///artistdatabase.db')
+engine = create_engine('sqlite:///artistswithusers.db')
 Base.metadata.create_all(engine)
