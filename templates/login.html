@@ -14,7 +14,7 @@
           <div id="signinButton">
           <span class="g-signin"
             data-scope="openid email"
-            data-clientid="583292164892-ahg5vtarrh3evtlavq571da9td64lhvj.apps.googleusercontent.com"
+            data-clientid="714034716837-9cdpjitqnk0kqmqatm5t6i2k4vqgf120.apps.googleusercontent.com"
             data-redirecturi="postmessage"
             data-accesstype="offline"
             data-cookiepolicy="single_host_origin"
@@ -31,16 +31,16 @@
             // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the main restaurants page
             $.ajax({
               type: 'POST',
-              url: '/gconnect/?state={{STATE}}',
+              url: '/gconnect?state={{STATE}}',
               processData: false,
-              data: authResult['code'],
               contentType: 'application/octet-stream; charset=utf-8',
+              data: authResult['code'],
               success: function(result) {
                 // Handle or verify the server response if necessary.
                 if (result) {
                   $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
                  setTimeout(function() {
-                  window.location.href = "/artists";
+                  window.location.href = "/artists/";
                  }, 4000);
 
               } else if (authResult['error']) {
@@ -52,6 +52,42 @@
 
           }); } }
         </script>
+
+        <!--FACEBOOK SIGN IN -->
+
+        <script>
+          window.fbAsyncInit = function() {
+            FB.init({
+              appId      : '344885392584396',
+              cookie     : true,
+              xfbml      : true,
+              version    : 'v2.12'
+            });
+
+            FB.AppEvents.logPageView();
+
+          };
+
+          (function(d, s, id){
+             var js, fjs = d.getElementsByTagName(s)[0];
+             if (d.getElementById(id)) {return;}
+             js = d.createElement(s); js.id = id;
+             js.src = "https://connect.facebook.net/en_US/sdk.js";
+             fjs.parentNode.insertBefore(js, fjs);
+           }(document, 'script', 'facebook-jssdk'));
+        </script>
+
+<button>
+
+
+          <fb:login-button scope="public_profile,email" onlogin="sendTokenToServer();">
+<a href='javascript:sendTokenToServer()'>Login with Facebook</a>
+
+</fb:login-button>
+
+
+        </button>
+<!--END FACEBOOK SIGN IN -->
 
   </body>
 </html>

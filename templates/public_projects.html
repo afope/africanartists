@@ -1,0 +1,54 @@
+
+
+
+      <head>
+      <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='artists.css') }}">
+      <link href="https://fonts.googleapis.com/css?family=EB+Garamond" rel="stylesheet">
+      <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
+      </head>
+
+      <div class = 'flash'>
+		      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+
+        <ul>
+        {% for message in messages %}
+            <li> <strong> {{ message }} </strong> </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+
+    </div>
+
+
+      <body>
+	         <header>
+		        <h1>Projects</h1>
+		         <p class="add-new rotate-one"><a href="{{url_for('newProject', artist_id=1)}}">include ya werk</a></p>
+	           </header>
+
+             {% for project in projects %}
+	            <section class="artist_info">
+		              <div class="grid-flex">
+			<div class="col col-image" style="background:url({{project.imageUrl}});">
+			</div>
+			<div class="col col-text">
+				<div class="Aligner-item">
+					<p class="artist_name">{{project.title}}</p>
+					<p class="artist_bio">{{project.description}}</p>
+					<ul class="buttons">
+					</ul>
+				</div>
+			</div>
+		</div>
+	</section>
+
+
+	{% endfor %}
+
+  </div>
+
+<footer>
+  <p> coded with <i class="em em-black_heart"></i> by afopefoluwa</p>
+</footer>

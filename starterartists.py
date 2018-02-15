@@ -2,9 +2,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from database_setup import Artists, Base, Projects
+from database_setup import Artists, Base, Projects, User
 
-engine = create_engine('sqlite:///artistdatabase.db')
+engine = create_engine('sqlite:///artistswithusers.db')
 # Bind the engine to the metadata of the Base class so that the
 # declaratives can be accessed through a DBSession instance
 Base.metadata.bind = engine
@@ -19,6 +19,11 @@ DBSession = sessionmaker(bind=engine)
 # session.rollback()
 session = DBSession()
 
+# Create dummy user
+User1 = User(name="Robo Barista", email="tinnyTim@udacity.com",
+             picture='https://pbs.twimg.com/profile_images/2671170543/18debd694829ed78203a5a36dd364160_400x400.png')
+session.add(User1)
+session.commit()
 
 
 artist1 = Artists(name="Lorem Ipsum",
@@ -31,13 +36,13 @@ session.add(artist1)
 session.commit()
 
 project1 = Projects(title="hey", description="a Vietnamese noodle soup consisting of broth, linguine-shaped rice noodles called banh pho, a few herbs, and meat.", imageUrl="""https://cdn.theculturetrip.com/images/56-3632575-6755478359-737f995e95-o.jpg""",
-artist=artist1)
+artists=artist1)
 
 session.add(project1)
 session.commit()
 
 project2 = Projects(title="there", description="a Vietnamese noodle soup consisting of broth, linguine-shaped rice noodles called banh pho, a few herbs, and meat.", imageUrl="""https://cdn.theculturetrip.com/images/56-3632575-6755478359-737f995e95-o.jpg""",
-artist=artist1)
+artists=artist1)
 
 session.add(project2)
 session.commit()
@@ -52,13 +57,13 @@ session.add(artist2)
 session.commit()
 
 project1 = Projects(title="what", description="a Vietnamese noodle soup consisting of broth, linguine-shaped rice noodles called banh pho, a few herbs, and meat.", imageUrl="""https://cdn.theculturetrip.com/images/56-3632575-6755478359-737f995e95-o.jpg""",
-artist=artist2)
+artists=artist2)
 
 session.add(project1)
 session.commit()
 
 project2 = Projects(title="is", description="a Vietnamese noodle soup consisting of broth, linguine-shaped rice noodles called banh pho, a few herbs, and meat.", imageUrl="""https://cdn.theculturetrip.com/images/56-3632575-6755478359-737f995e95-o.jpg""",
-artist=artist2)
+artists=artist2)
 
 session.add(project2)
 session.commit()
@@ -73,13 +78,13 @@ session.add(artist3)
 session.commit()
 
 project1 = Projects(title="up", description="a Vietnamese noodle soup consisting of broth, linguine-shaped rice noodles called banh pho, a few herbs, and meat.", imageUrl="""https://cdn.theculturetrip.com/images/56-3632575-6755478359-737f995e95-o.jpg""",
-artist=artist3)
+artists=artist3)
 
 session.add(project1)
 session.commit()
 
 project2 = Projects(title="i", description="a Vietnamese noodle soup consisting of broth, linguine-shaped rice noodles called banh pho, a few herbs, and meat.", imageUrl="""https://cdn.theculturetrip.com/images/56-3632575-6755478359-737f995e95-o.jpg""",
-artist=artist3)
+artists=artist3)
 
 session.add(project2)
 session.commit()
@@ -94,13 +99,13 @@ session.add(artist4)
 session.commit()
 
 project1 = Projects(title="miss", description="a Vietnamese noodle soup consisting of broth, linguine-shaped rice noodles called banh pho, a few herbs, and meat.", imageUrl="""https://cdn.theculturetrip.com/images/56-3632575-6755478359-737f995e95-o.jpg""",
-artist=artist4)
+artists=artist4)
 
 session.add(project1)
 session.commit()
 
 project2 = Projects(title="you", description="a Vietnamese noodle soup consisting of broth, linguine-shaped rice noodles called banh pho, a few herbs, and meat.", imageUrl="""https://cdn.theculturetrip.com/images/56-3632575-6755478359-737f995e95-o.jpg""",
-artist=artist4)
+artists=artist4)
 
 session.add(project2)
 session.commit()
@@ -116,13 +121,13 @@ session.commit()
 
 
 project1 = Projects(title="so", description="a Vietnamese noodle soup consisting of broth, linguine-shaped rice noodles called banh pho, a few herbs, and meat.", imageUrl="""https://cdn.theculturetrip.com/images/56-3632575-6755478359-737f995e95-o.jpg""",
-artist=artist5)
+artists=artist5)
 
 session.add(project1)
 session.commit()
 
 project2 = Projects(title="much", description="a Vietnamese noodle soup consisting of broth, linguine-shaped rice noodles called banh pho, a few herbs, and meat.", imageUrl="""https://cdn.theculturetrip.com/images/56-3632575-6755478359-737f995e95-o.jpg""",
-artist=artist5)
+artists=artist5)
 
 session.add(project2)
 session.commit()
