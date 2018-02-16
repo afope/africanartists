@@ -9,7 +9,11 @@
     <header>
       <h1>Artists</h1>
       <p class="add-new rotate-one"><a href="{{url_for('newArtist')}}">Add new artist</a></p>
-      <p class="add-new rotate-one"><a href="{{url_for('gdisconnect')}}">Logout</a></p>
+                    {%if 'username' not in session %}
+			<a href="{{url_for('showLogin')}}">Click Here to Login </a>
+			{% else %}
+			<a href="{{url_for('disconnect')}}">Logout </a>
+			{% endif %}
     </header>
 
 

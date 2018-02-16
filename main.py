@@ -199,10 +199,10 @@ def fbconnect():
     access_token = request.data
 
 
-    app_id = json.loads(open('fb_client_secrets.json', 'r').read())[
+    app_id = json.loads(open('fbclientsecrets.json', 'r').read())[
         'web']['app_id']
     app_secret = json.loads(
-        open('fb_client_secrets.json', 'r').read())['web']['app_secret']
+        open('fbclientsecrets.json', 'r').read())['web']['app_secret']
     url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s' % (
         app_id, app_secret, access_token)
     h = httplib2.Http()
@@ -402,7 +402,27 @@ def deleteProject(artist_id, project_id):
     else:
         return render_template('deleteartist.html', artist_id=artist_id, project_id=project_id, project=projectToDelete)
 
-
+# Disconnect based on provider
+@app.route('/disconnect/')
+def disconnect():
+    if 'provider' in login_session:
+        if login_session['provider'] == 'google':
+            gdisconnect()
+            del login_session['gplus_id']
+            del login_session['access_token']
+        if login_session['provider'] == 'facebook':
+            fbdisconnect()
+            del login_session['facebook_id']
+        del login_session['username']
+        del login_session['email']
+        del login_session['picture']
+        del login_session['user_id']
+        del login_session['provider']
+        flash("You have successfully been logged out.")
+        return redirect(url_for('showArtists'))
+    else:
+        flash("You were not logged in")
+        return redirect(url_for('showArtists'))
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'

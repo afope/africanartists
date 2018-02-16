@@ -9,6 +9,11 @@
     <header>
       <h1>Artists</h1>
       <p class="add-new rotate-one"><a href="{{url_for('newArtist')}}">Add an artist</a></p>
+      {%if 'username' not in session %}
+<a href="{{url_for('showLogin')}}">Click Here to Login </a>
+{% else %}
+<a href="{{url_for('disconnect')}}">Logout </a>
+{% endif %}
     </header>
 
 
