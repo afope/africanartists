@@ -32,6 +32,20 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+
+# ADD JSON ENDPOINT HERE
+
+@app.route('/artists/<int:artist_id>/JSON')
+def artistJSON(artist_id):
+    artist = session.query(Artists).filter_by(id=artist_id).one()
+    return jsonify(Artists=artist.serialize)
+
+
+@app.route('/artists/<int:artist_id>/projects/<int:project_id>/JSON')
+def projectJSON(artist_id, project_id):
+    projects = session.query(Projects).filter_by(id=project_id).one()
+    return jsonify(Projects=projects.serialize)
+
 # Create anti-forgery state token
 @app.route('/login/')
 def showLogin():
