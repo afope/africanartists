@@ -131,8 +131,6 @@ def gconnect():
     login_session['provider'] = 'google'
 
     #see if user exists, if it doesn't make a new one
-
-
     user_id = getUserID(login_session['email'])
     if not user_id:
         user_id = createUser(login_session)
@@ -160,7 +158,7 @@ def createUser(login_session):
 
 
 def getUserInfo(user_id):
-    user = session.query(User).filter_by(id=user_id).first()
+    user = session.query(User).filter_by(id=user_id).one_or_none()
     return user
 
 
@@ -286,7 +284,7 @@ def newArtist():
     if 'username' not in login_session:
         return redirect('/login')
     if request.method == 'POST':
-        newArtistItem = Artists(name = request.form['name'], bio = request.form['bio'], country = request.form['country'], category = request.form['category'], imageUrl = request.form['imageUrl'], user_id=login_session['user_id'])
+        newArtistItem = Artists(name = request.form['name'], bio = request.form['bio'], country = request.form['country'], category = request.form['category'], imageUrl = request.form['imageUrl'], user_id = login_session['user_id'])
         session.add(newArtistItem)
         session.commit()
         flash("New artist created")
@@ -340,7 +338,7 @@ def showProjects(artist_id):
     artist = session.query(Artists).filter_by(id=artist_id).one()
     creator = getUserInfo(artist.user_id)
     projects = session.query(Projects).filter_by(artist_id=artist_id).all()
-    if 'username' not in login_session or creator != login_session['user_id']:
+    if 'username' not in login_session:
         return render_template('public_projects.html', projects=projects, artist=artist, creator=creator)
     else:
         return render_template('projects.html', projects=projects, artist=artist, creator=creator)
@@ -350,23 +348,23 @@ def newProject(artist_id):
     if 'username' not in login_session:
         return redirect('/login')
     artist = session.query(Artists).filter_by(id=artist_id).one()
-    if artist.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not allowed to add project to this artist. Please create your own artist in order to add project.');}</script><body onload='myFunction()''>"
+    if login_session['user_id'] != artist.user_id:
+        return "<script>function myFunction() {alert('You are not authorized to add menu items to this restaurant. Please create your own restaurant in order to add items.');}</script><body onload='myFunction()''>"
     if request.method == 'POST':
-        newProjectItem = Projects(title = request.form['title'], description = request.form['description'],imageUrl = request.form['imageUrl'], artist_id=artist_id)
+        newProjectItem = Projects(title = request.form['title'], description = request.form['description'],imageUrl = request.form['imageUrl'], artist_id=artist_id, user_id=artist.user_id)
         session.add(newProjectItem)
         session.commit()
         flash("New Project created")
-        return redirect(url_for('showProjects', artist_id=artist_id))
+        return redirect(url_for('showProjects', artist_id=artist_id, artist=artist))
     else:
-        return render_template('newproject.html',artist_id=artist_id)
+        return render_template('newproject.html',artist_id=artist_id, artist=artist)
 
 @app.route('/artists/<int:artist_id>/projects/<int:project_id>/edit/', methods = ['GET', 'POST'])
 def editProject(artist_id, project_id):
-    editedProjectItem = session.query(Projects).filter_by(id=project_id).one()
     if 'username' not in login_session:
         return redirect('/login')
-        return redirect('/login')
+    artist = session.query(Artists).filter_by(id=artist_id).one()
+    editedProjectItem = session.query(Projects).filter_by(id=project_id).one()
     if editedProjectItem.user_id != login_session['user_id']:
         return "<script>function myFunction() {alert('You are not allowed to edit this artist. Please create your own artist in order to edit.');}</script><body onload='myFunction()''>"
     if request.method == 'POST':
@@ -394,7 +392,7 @@ def deleteProject(artist_id, project_id):
         session.delete(projectToDelete)
         session.commit()
         flash("Project deleted successfully")
-        return redirect(url_for('showProjects', artist_id=artist_id, project_id=project_id))
+        return redirect(url_for('showArtists', artist_id=artist_id, project_id=project_id))
     else:
         return render_template('deleteartist.html', artist_id=artist_id, project_id=project_id, project=projectToDelete)
 

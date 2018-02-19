@@ -12,12 +12,12 @@
   <input type='text' size='30' name='title'>
 
   <p>Description: </p>
-  <input type='text' size='40' name='description'>
+  <input type='text' maxlength="250" rows="3" name='description'>
   <p>Image:</p>
   <input type='text' size='30' name='imageUrl'>
 
   <button type='submit' value='Create' class="submit">Create</button>
-  <a href="{{url_for('showProjects', artist_id=artists.id)}}"><button type="button" name="button" class="cancel">Cancel</button></a>
+  <a href="{{url_for('showProjects', artist_id=artist.id)}}"><button type="button" name="button" class="cancel">Cancel</button></a>
   </form>
 </div>
 

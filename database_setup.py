@@ -53,7 +53,7 @@ class Projects(Base):
     description = Column(String(500), nullable=False)
     imageUrl = Column(String(250))
     artist_id = Column(Integer, ForeignKey('artists.id'))
-    artists = relationship(Artists)
+    artist = relationship(Artists)
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
 
