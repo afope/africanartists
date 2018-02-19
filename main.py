@@ -1,6 +1,7 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from sqlalchemy import create_engine
+from sqlalchemy import asc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Artists, Projects, User
 from werkzeug.utils import secure_filename
@@ -274,8 +275,7 @@ def homepage():
 
 @app.route('/artists/')
 def showArtists():
-    artists = session.query(Artists).all()
-    output = ''
+    artists = session.query(Artists).order_by(asc(Artists.name))
     if 'username' not in login_session:
         return render_template('public_artists.html', artists=artists)
     else:
@@ -286,7 +286,7 @@ def newArtist():
     if 'username' not in login_session:
         return redirect('/login')
     if request.method == 'POST':
-        newArtistItem = Artists(name = request.form['name'], bio = request.form['bio'], country = request.form['country'], category = request.form['category'], imageUrl = request.form['imageUrl'])
+        newArtistItem = Artists(name = request.form['name'], bio = request.form['bio'], country = request.form['country'], category = request.form['category'], imageUrl = request.form['imageUrl'], user_id=login_session['user_id'])
         session.add(newArtistItem)
         session.commit()
         flash("New artist created")
@@ -325,7 +325,7 @@ def deleteArtist(artist_id):
     if 'username' not in login_session:
         return redirect('/login')
     if artistToDelete.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not allowed to edit this artist. Please create your own artist in order to delete.');}</script><body onload='myFunction()''>"
+        return "<script>function myFunction() {alert('You are not allowed to delete this artist. Please create your own artist in order to delete.');}</script><body onload='myFunction()''>"
     if request.method == 'POST':
         session.delete(artistToDelete)
         session.commit()
@@ -340,20 +340,20 @@ def showProjects(artist_id):
     artist = session.query(Artists).filter_by(id=artist_id).one()
     creator = getUserInfo(artist.user_id)
     projects = session.query(Projects).filter_by(artist_id=artist_id).all()
-    output = ''
-    if 'username' not in login_session or creator.id != login_session['user_id']:
+    if 'username' not in login_session or creator != login_session['user_id']:
         return render_template('public_projects.html', projects=projects, artist=artist, creator=creator)
     else:
         return render_template('projects.html', projects=projects, artist=artist, creator=creator)
 
 @app.route('/artists/<int:artist_id>/projects/new/', methods = ['GET', 'POST'])
 def newProject(artist_id):
-    newProjectItem = Projects(title = request.form['title'], description = request.form['description'],imageUrl = request.form['imageUrl'], artist_id=artist_id)
     if 'username' not in login_session:
         return redirect('/login')
-    if editedArtistItem.user_id != login_session['user_id']:
+    artist = session.query(Artists).filter_by(id=artist_id).one()
+    if artist.user_id != login_session['user_id']:
         return "<script>function myFunction() {alert('You are not allowed to add project to this artist. Please create your own artist in order to add project.');}</script><body onload='myFunction()''>"
     if request.method == 'POST':
+        newProjectItem = Projects(title = request.form['title'], description = request.form['description'],imageUrl = request.form['imageUrl'], artist_id=artist_id)
         session.add(newProjectItem)
         session.commit()
         flash("New Project created")
@@ -388,7 +388,7 @@ def deleteProject(artist_id, project_id):
     projectToDelete = session.query(Projects).filter_by(id=project_id).one()
     if 'username' not in login_session:
         return redirect('/login')
-    if editedProjectItem.user_id != login_session['user_id']:
+    if projectToDelete.user_id != login_session['user_id']:
         return "<script>function myFunction() {alert('You are not allowed to edit this artist. Please create your own artist in order to delete.');}</script><body onload='myFunction()''>"
     if request.method == 'POST':
         session.delete(projectToDelete)
