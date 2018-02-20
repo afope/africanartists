@@ -92,6 +92,8 @@ header h1  {
   font-weight: 400;
 }
 
+
+
 .home-images {
   flex-grow: 1;
   display: flex;
@@ -244,4 +246,5 @@ footer {
   font-size: 12px;
   margin-top: 50px;
   margin-bottom: 20px;
+  position: fixed;
 }
