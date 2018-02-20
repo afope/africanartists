@@ -210,6 +210,10 @@ a {
   font-family: simplolight;
 }
 
+.about p {
+  line-height: 27px;
+}
+
 li > a {
   position: relative;
   color: #000;
@@ -246,5 +250,4 @@ footer {
   font-size: 12px;
   margin-top: 50px;
   margin-bottom: 20px;
-  position: fixed;
 }

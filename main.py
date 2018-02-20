@@ -1,5 +1,23 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Purpose.
+
+This application provides a list of artists with
+various projects as well as provides a user registration
+and authentication system. registered users have
+the ability to post, edit, and delete their own items.
+
+"""
+
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+import random
+import string
+import httplib2
+import json
+import requests
+
+from flask import Flask, render_template, request, \
+    redirect, url_for, flash, jsonify, make_response
 from sqlalchemy import create_engine
 from sqlalchemy import asc
 from sqlalchemy.orm import sessionmaker
@@ -8,17 +26,10 @@ from werkzeug.utils import secure_filename
 from flask import send_from_directory
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 from flask import session as login_session
-import random, string
+
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 from oauth2client.client import AccessTokenCredentials
-
-import httplib2
-import json
-from flask import make_response
-import requests
-
-
 
 
 app = Flask(__name__)
@@ -34,22 +45,10 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
-# ADD JSON ENDPOINT HERE
-
-@app.route('/artists/<int:artist_id>/JSON')
-def artistJSON(artist_id):
-    artist = session.query(Artists).filter_by(id=artist_id).one()
-    return jsonify(Artists=artist.serialize)
-
-
-@app.route('/artists/<int:artist_id>/projects/<int:project_id>/JSON')
-def projectJSON(artist_id, project_id):
-    projects = session.query(Projects).filter_by(id=project_id).one()
-    return jsonify(Projects=projects.serialize)
-
 # Create anti-forgery state token
 @app.route('/login/')
 def showLogin():
+    """Create login session state and show login page."""
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
@@ -58,6 +57,7 @@ def showLogin():
 
 @app.route('/gconnect', methods=['POST', 'GET'])
 def gconnect():
+    """Connect google account."""
     # Validate state token
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
@@ -108,8 +108,8 @@ def gconnect():
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'),
-                                 200)
+        response = make_response(
+            json.dumps('Current user is already connected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -127,10 +127,10 @@ def gconnect():
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
-     # ADD PROVIDER TO LOGIN SESSION
+    # ADD PROVIDER TO LOGIN SESSION
     login_session['provider'] = 'google'
 
-    #see if user exists, if it doesn't make a new one
+    # see if user exists, if it doesn't make a new one
     user_id = getUserID(login_session['email'])
     if not user_id:
         user_id = createUser(login_session)
@@ -142,13 +142,16 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output +=' " style = "width: 300px; height: 300px; \
+        border-radius: 150px;-webkit-border-radius: \
+        150px;-moz-border-radius: 150px;"> '
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
 
 
 def createUser(login_session):
+    """Create new User."""
     newUser = User(name=login_session['username'], email=login_session[
                    'email'], picture=login_session['picture'])
     session.add(newUser)
@@ -158,11 +161,13 @@ def createUser(login_session):
 
 
 def getUserInfo(user_id):
+    """Get user id."""
     user = session.query(User).filter_by(id=user_id).one_or_none()
     return user
 
 
 def getUserID(email):
+    """Retrieve User id by email from database."""
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
@@ -170,12 +175,10 @@ def getUserID(email):
         return None
 
 
-
 # DISCONNECT - Revoke a current user's token and reset their login_session
-
-
 @app.route('/gdisconnect/')
 def gdisconnect():
+    """Disconnect logged in google account."""
     gplus_id = login_session['gplus_id']
     # The access token must me included to successfully logout
     access_token = login_session['access_token']
@@ -187,12 +190,12 @@ def gdisconnect():
 
 @app.route('/fbconnect', methods=['GET', 'POST'])
 def fbconnect():
+    """Connect facebook account."""
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
     access_token = request.data
-
 
     app_id = json.loads(open('fbclientsecrets.json', 'r').read())[
         'web']['app_id']
@@ -203,15 +206,16 @@ def fbconnect():
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
 
-
     # Use token to get user info from API
     userinfo_url = "https://graph.facebook.com/v2.8/me"
     '''
-        Due to the formatting for the result from the server token exchange we have to
-        split the token first on commas and select the first index which gives us the key : value
-        for the server access token then we split it on colons to pull out the actual token value
-        and replace the remaining quotes with nothing so that it can be used directly in the graph
-        api calls
+        Due to the formatting for the result from the server
+        token exchange we have to split the token first on commas
+        and select the first index which gives us the key : value
+        for the server access token then we split it on colons to
+        pull out the actual token value and replace the remaining
+        quotes with nothing so that it can be used directly
+        in the graph api calls
     '''
     token = result.split(',')[0].split(':')[1].replace('"', '')
 
@@ -250,7 +254,9 @@ def fbconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output +=' " style = "width: 300px; height: 300px; \
+        border-radius: 150px;-webkit-border-radius: \
+        150px;-moz-border-radius: 150px;"> '
 
     flash("Now logged in as %s" % login_session['username'])
     return output
@@ -258,10 +264,11 @@ def fbconnect():
 
 @app.route('/fbdisconnect')
 def fbdisconnect():
+    """Disconnect facebook account."""
     facebook_id = login_session['facebook_id']
     # The access token must me included to successfully logout
     access_token = login_session['access_token']
-    url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (facebook_id,access_token)
+    url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (facebook_id, access_token)
     h = httplib2.Http()
     result = h.request(url, 'DELETE')[1]
     return "you have been logged out"
@@ -269,22 +276,32 @@ def fbdisconnect():
 
 @app.route('/')
 def homepage():
+    """Show homepage."""
     return render_template('home.html')
+
 
 @app.route('/artists/')
 def showArtists():
+    """Show all artists."""
     artists = session.query(Artists).order_by(asc(Artists.name))
     if 'username' not in login_session:
         return render_template('public_artists.html', artists=artists)
     else:
         return render_template('artists.html', artists=artists)
 
-@app.route('/artists/new/', methods =['GET', 'POST'])
+
+@app.route('/artists/new/', methods=['GET', 'POST'])
 def newArtist():
+    """Create new artist."""
     if 'username' not in login_session:
         return redirect('/login')
     if request.method == 'POST':
-        newArtistItem = Artists(name = request.form['name'], bio = request.form['bio'], country = request.form['country'], category = request.form['category'], imageUrl = request.form['imageUrl'], user_id = login_session['user_id'])
+        newArtistItem = Artists(
+            name=request.form['name'],
+            bio=request.form['bio'], country=request.form['country'],
+            category=request.form['category'],
+            imageUrl=request.form['imageUrl'],
+            user_id=login_session['user_id'])
         session.add(newArtistItem)
         session.commit()
         flash("New artist created")
@@ -292,13 +309,18 @@ def newArtist():
     else:
         return render_template('newartist.html')
 
-@app.route('/artists/<int:artist_id>/edit/', methods = ['GET', 'POST'])
+
+@app.route('/artists/<int:artist_id>/edit/', methods=['GET', 'POST'])
 def editArtist(artist_id):
+    """Edit artist."""
     editedArtistItem = session.query(Artists).filter_by(id=artist_id).one()
     if 'username' not in login_session:
         return redirect('/login')
     if editedArtistItem.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not allowed to edit this artist. Please create your own artist in order to edit.');}</script><body onload='myFunction()''>"
+        return "<script>function myFunction() {alert('You\
+            are not allowed to edit this artist.\
+            Please create your own artist in order to edit.');}\
+            </script><body onload='myFunction()''>"
     if request.method == 'POST':
         if request.form['name']:
             editedArtistItem.name = request.form['name']
@@ -313,60 +335,88 @@ def editArtist(artist_id):
         session.add(editedArtistItem)
         session.commit()
         flash("Artist successfully edited")
-        return redirect(url_for('showArtists', artist_id = artist_id))
+        return redirect(url_for('showArtists', artist_id=artist_id))
     else:
-        return render_template('editartist.html', a=editedArtistItem, artist_id=artist_id)
+        return render_template('editartist.html',
+                               a=editedArtistItem, artist_id=artist_id)
 
-@app.route('/artists/<int:artist_id>/delete/', methods = ['GET', 'POST'])
+
+@app.route('/artists/<int:artist_id>/delete/', methods=['GET', 'POST'])
 def deleteArtist(artist_id):
+    """Delete artist."""
     artistToDelete = session.query(Artists).filter_by(id=artist_id).one()
     if 'username' not in login_session:
         return redirect('/login')
     if artistToDelete.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not allowed to delete this artist. Please create your own artist in order to delete.');}</script><body onload='myFunction()''>"
+        return "<script>function myFunction() {alert('You\
+         are not allowed to delete this artist. \
+         Please create your own artist in order to delete.');}\
+         </script><body onload='myFunction()''>"
     if request.method == 'POST':
         session.delete(artistToDelete)
         session.commit()
         flash("Artist successfully deleted")
         return redirect(url_for('showArtists', artist_id=artist_id))
-    return render_template('deleteartist.html', a=deleteArtist, artist_id=artist_id)
+    return render_template('deleteartist.html',
+                           a=deleteArtist, artist_id=artist_id)
 
 
 @app.route('/artists/<int:artist_id>/projects/')
 @app.route('/artists/<int:artist_id>/')
 def showProjects(artist_id):
+    """Show projects."""
     artist = session.query(Artists).filter_by(id=artist_id).one()
     creator = getUserInfo(artist.user_id)
     projects = session.query(Projects).filter_by(artist_id=artist_id).all()
     if 'username' not in login_session:
-        return render_template('public_projects.html', projects=projects, artist=artist, creator=creator)
+        return render_template(
+            'public_projects.html', projects=projects,
+            artist=artist, creator=creator)
     else:
-        return render_template('projects.html', projects=projects, artist=artist, creator=creator)
+        return render_template('projects.html', projects=projects,
+                               artist=artist, creator=creator)
 
-@app.route('/artists/<int:artist_id>/projects/new/', methods = ['GET', 'POST'])
+
+@app.route('/artists/<int:artist_id>/projects/new/', methods=['GET', 'POST'])
 def newProject(artist_id):
+    """Create new project."""
     if 'username' not in login_session:
         return redirect('/login')
     artist = session.query(Artists).filter_by(id=artist_id).one()
     if login_session['user_id'] != artist.user_id:
-        return "<script>function myFunction() {alert('You are not authorized to add menu items to this restaurant. Please create your own restaurant in order to add items.');}</script><body onload='myFunction()''>"
+        return "<script>function myFunction() {alert('You \
+            are not authorized to add menu items to this restaurant.\
+            Please create your own restaurant in order to add items.');}\
+            </script><body onload='myFunction()''>"
     if request.method == 'POST':
-        newProjectItem = Projects(title = request.form['title'], description = request.form['description'],imageUrl = request.form['imageUrl'], artist_id=artist_id, user_id=artist.user_id)
+        newProjectItem = Projects(title=request.form['title'],
+                                  description=request.form['description'],
+                                  imageUrl=request.form['imageUrl'],
+                                  artist_id=artist_id,
+                                  user_id=artist.user_id)
         session.add(newProjectItem)
         session.commit()
         flash("New Project created")
-        return redirect(url_for('showProjects', artist_id=artist_id, artist=artist))
+        return redirect(url_for('showProjects',
+                                artist_id=artist_id, artist=artist))
     else:
-        return render_template('newproject.html',artist_id=artist_id, artist=artist)
+        return render_template('newproject.html', artist_id=artist_id,
+                               artist=artist)
 
-@app.route('/artists/<int:artist_id>/projects/<int:project_id>/edit/', methods = ['GET', 'POST'])
+
+@app.route('/artists/<int:artist_id>/projects/<int:project_id>/edit/',
+           methods=['GET', 'POST'])
 def editProject(artist_id, project_id):
+    """Edit Project."""
     if 'username' not in login_session:
         return redirect('/login')
     artist = session.query(Artists).filter_by(id=artist_id).one()
     editedProjectItem = session.query(Projects).filter_by(id=project_id).one()
     if editedProjectItem.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not allowed to edit this artist. Please create your own artist in order to edit.');}</script><body onload='myFunction()''>"
+        return "<script>function myFunction() {alert('You \
+            are not allowed to edit this artist. \
+            Please create your own artist in order to edit.');}\
+            </script><body onload='myFunction()''>"
     if request.method == 'POST':
         if request.form['title']:
             editedProjectItem.title = request.form['title']
@@ -377,28 +427,43 @@ def editProject(artist_id, project_id):
         session.add(editedProjectItem)
         session.commit()
         flash("Project edited successfully")
-        return redirect(url_for('showProjects', artist_id = artist_id))
+        return redirect(url_for('showProjects', artist_id=artist_id))
     else:
-        return render_template('editproject.html', artist_id=artist_id, project_id=project_id, project=editedProjectItem)
+        return render_template(
+                                'editproject.html', artist_id=artist_id,
+                                project_id=project_id,
+                                project=editedProjectItem)
 
-@app.route('/artists/<int:artist_id>/projects/<int:project_id>/delete/', methods=['GET', 'POST'])
+
+@app.route(
+            '/artists/<int:artist_id>/projects/<int:project_id>/delete/',
+            methods=['GET', 'POST'])
 def deleteProject(artist_id, project_id):
+    """Delete Project."""
     projectToDelete = session.query(Projects).filter_by(id=project_id).one()
     if 'username' not in login_session:
         return redirect('/login')
     if projectToDelete.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not allowed to edit this artist. Please create your own artist in order to delete.');}</script><body onload='myFunction()''>"
+        return "<script>function myFunction() \
+            {alert('You are not allowed to edit this artist. \
+            Please create your own artist in order to delete.');} \
+            </script><body onload='myFunction()''>"
     if request.method == 'POST':
         session.delete(projectToDelete)
         session.commit()
         flash("Project deleted successfully")
-        return redirect(url_for('showArtists', artist_id=artist_id, project_id=project_id))
+        return redirect(url_for(
+            'showArtists', artist_id=artist_id, project_id=project_id))
     else:
-        return render_template('deleteartist.html', artist_id=artist_id, project_id=project_id, project=projectToDelete)
+        return render_template(
+            'deleteartist.html', artist_id=artist_id,
+            project_id=project_id, project=projectToDelete)
+
 
 # Disconnect based on provider
 @app.route('/disconnect/')
 def disconnect():
+    """Log account out."""
     if 'provider' in login_session:
         if login_session['provider'] == 'google':
             gdisconnect()
@@ -417,6 +482,22 @@ def disconnect():
     else:
         flash("You were not logged in")
         return redirect(url_for('showArtists'))
+
+
+# ADD JSON ENDPOINT HERE
+@app.route('/artists/<int:artist_id>/JSON')
+def artistJSON(artist_id):
+    """JSON endpoint for artist."""
+    artist = session.query(Artists).filter_by(id=artist_id).one()
+    return jsonify(Artists=artist.serialize)
+
+
+@app.route('/artists/<int:artist_id>/projects/<int:project_id>/JSON')
+def projectJSON(artist_id, project_id):
+    """JSON endpoint for project."""
+    projects = session.query(Projects).filter_by(id=project_id).one()
+    return jsonify(Projects=projects.serialize)
+
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
